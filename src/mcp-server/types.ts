@@ -30,3 +30,24 @@ export interface DenyParams {
   comment: string; // Required for deny
 }
 
+export interface SpawnAgentParams {
+  agent_type: 'codebase-locator' | 'codebase-analyzer' | 'codebase-pattern-finder' | 'thoughts-locator' | 'thoughts-analyzer' | 'web-search-researcher';
+  task: string;
+  context?: Record<string, unknown>;
+  session_id?: string;
+}
+
+export interface GetAgentStatusParams {
+  task_id: string;
+}
+
+export interface GetAgentResultsParams {
+  task_id: string;
+}
+
+export interface ListAgentTasksParams {
+  session_id?: string;
+  status?: 'pending' | 'running' | 'completed' | 'failed';
+  limit?: number;
+}
+

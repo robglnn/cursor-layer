@@ -58,3 +58,26 @@ export interface ConversationEvent {
   approvalId?: string;
 }
 
+export interface AgentTask {
+  id: string;
+  sessionId?: string;
+  agentType: string;
+  task: string;
+  context?: string; // JSON string
+  status: AgentTaskStatus;
+  results?: string; // JSON string
+  error?: string;
+  createdAt: Date;
+  completedAt?: Date;
+}
+
+export type AgentTaskStatus = 'pending' | 'running' | 'completed' | 'failed';
+
+export type AgentType = 
+  | 'codebase-locator'
+  | 'codebase-analyzer'
+  | 'codebase-pattern-finder'
+  | 'thoughts-locator'
+  | 'thoughts-analyzer'
+  | 'web-search-researcher';
+

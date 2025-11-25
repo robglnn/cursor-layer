@@ -96,22 +96,29 @@ After getting initial clarifications:
 2. **Create a research todo list** using TodoWrite to track exploration tasks
 
 3. **Spawn parallel sub-tasks for comprehensive research**:
-   - Create multiple Task agents to research different aspects concurrently
+   
+   **Preferred: Use MCP Tools**
+   - Use `spawn_agent` to create multiple agent tasks concurrently
    - Use the right agent for each type of research:
+     - **codebase-locator** - To find more specific files
+     - **codebase-analyzer** - To understand implementation details
+     - **codebase-pattern-finder** - To find similar features we can model after
+   - Track task IDs and wait for all to complete
+   - Retrieve results with `get_agent_results`
+   
+   **Fallback: Prompt-Based**
+   - Create multiple agent prompts to research different aspects concurrently
+   - Use explicit agent instructions: "Act as codebase-locator agent to..."
+   - Each agent knows how to:
+     - Find the right files and code patterns
+     - Identify conventions and patterns to follow
+     - Look for integration points and dependencies
+     - Return specific file:line references
+     - Find tests and examples
 
-   **For deeper investigation:**
-   - **codebase-locator** - To find more specific files
-   - **codebase-analyzer** - To understand implementation details
-   - **codebase-pattern-finder** - To find similar features we can model after
-
-   Each agent knows how to:
-   - Find the right files and code patterns
-   - Identify conventions and patterns to follow
-   - Look for integration points and dependencies
-   - Return specific file:line references
-   - Find tests and examples
-
-3. **Wait for ALL sub-tasks to complete** before proceeding
+3. **Wait for ALL agent tasks to complete** before proceeding
+   - If using MCP: Poll `get_agent_status` until all tasks are 'completed'
+   - If using prompts: Wait for all agent responses
 
 4. **Present findings and design options**:
    ```

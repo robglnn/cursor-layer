@@ -62,22 +62,29 @@ If the user's feedback requires understanding new code patterns or validating as
 
 1. **Create a research todo list** using TodoWrite
 
-2. **Spawn parallel sub-tasks for research**:
-   Use the right agent for each type of research:
-
-   **For code investigation:**
-   - **codebase-locator** - To find relevant files
-   - **codebase-analyzer** - To understand implementation details
-   - **codebase-pattern-finder** - To find similar patterns
-
-   **Be EXTREMELY specific about directories**:
-   - Include full path context in prompts
+2. **Spawn parallel sub-tasks for research** (if needed):
+   
+   **Preferred: Use MCP Tools**
+   - Use `spawn_agent` for code investigation:
+     - **codebase-locator** - To find relevant files
+     - **codebase-analyzer** - To understand implementation details
+     - **codebase-pattern-finder** - To find similar patterns
+   - Include full path context in agent context parameter
+   - Wait for completion and retrieve results
+   
+   **Fallback: Prompt-Based**
+   - Use explicit agent prompts for code investigation
+   - Be EXTREMELY specific about directories in prompts
+   - Include full path context
 
 3. **Read any new files identified by research**:
+   - Extract file paths from agent results (MCP) or responses (prompts)
    - Read them FULLY into the main context
    - Cross-reference with the plan requirements
 
-4. **Wait for ALL sub-tasks to complete** before proceeding
+4. **Wait for ALL agent tasks to complete** before proceeding
+   - If using MCP: Check status until all complete
+   - If using prompts: Wait for all responses
 
 ### Step 3: Present Understanding and Approach
 

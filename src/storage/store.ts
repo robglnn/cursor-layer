@@ -8,7 +8,7 @@ import Database from 'better-sqlite3';
 import { join } from 'path';
 import { homedir } from 'os';
 import { existsSync, mkdirSync } from 'fs';
-import type { Session, Approval, ConversationEvent, SessionStatus, ApprovalStatus } from './types.js';
+import type { Session, Approval, ConversationEvent, SessionStatus, ApprovalStatus, AgentTask, AgentTaskStatus, AgentType } from './types.js';
 
 export interface StoreOptions {
   dbPath?: string;
@@ -101,6 +101,24 @@ export class Store {
       );
       CREATE INDEX IF NOT EXISTS idx_conversation_session ON conversation_events(session_id, sequence);
       CREATE INDEX IF NOT EXISTS idx_conversation_approval ON conversation_events(approval_id);
+
+      -- Agent tasks table
+      CREATE TABLE IF NOT EXISTS agent_tasks (
+        id TEXT PRIMARY KEY,
+        session_id TEXT,
+        agent_type TEXT NOT NULL,
+        task TEXT NOT NULL,
+        context TEXT,
+        status TEXT NOT NULL CHECK (status IN ('pending', 'running', 'completed', 'failed')),
+        results TEXT,
+        error TEXT,
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        completed_at TIMESTAMP,
+        FOREIGN KEY (session_id) REFERENCES sessions(id)
+      );
+      CREATE INDEX IF NOT EXISTS idx_agent_tasks_session ON agent_tasks(session_id);
+      CREATE INDEX IF NOT EXISTS idx_agent_tasks_status ON agent_tasks(status);
+      CREATE INDEX IF NOT EXISTS idx_agent_tasks_type ON agent_tasks(agent_type);
     `;
 
     this.db.exec(schema);
@@ -368,6 +386,99 @@ export class Store {
       isCompleted: row.is_completed === 1,
       approvalStatus: row.approval_status as ApprovalStatus | undefined,
       approvalId: row.approval_id || undefined,
+    };
+  }
+
+  // Agent task methods
+  createAgentTask(task: AgentTask): void {
+    const stmt = this.db.prepare(`
+      INSERT INTO agent_tasks (
+        id, session_id, agent_type, task, context,
+        status, results, error, created_at, completed_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      task.id,
+      task.sessionId || null,
+      task.agentType,
+      task.task,
+      task.context || null,
+      task.status,
+      task.results || null,
+      task.error || null,
+      task.createdAt.toISOString(),
+      task.completedAt?.toISOString() || null
+    );
+  }
+
+  updateAgentTask(taskId: string, updates: Partial<AgentTask>): void {
+    const fields: string[] = [];
+    const values: any[] = [];
+
+    if (updates.status !== undefined) {
+      fields.push('status = ?');
+      values.push(updates.status);
+    }
+    if (updates.results !== undefined) {
+      fields.push('results = ?');
+      values.push(updates.results || null);
+    }
+    if (updates.error !== undefined) {
+      fields.push('error = ?');
+      values.push(updates.error || null);
+    }
+    if (updates.completedAt !== undefined) {
+      fields.push('completed_at = ?');
+      values.push(updates.completedAt?.toISOString() || null);
+    }
+
+    if (fields.length === 0) return;
+
+    values.push(taskId);
+    const sql = `UPDATE agent_tasks SET ${fields.join(', ')} WHERE id = ?`;
+    this.db.prepare(sql).run(...values);
+  }
+
+  getAgentTask(taskId: string): AgentTask | null {
+    const row = this.db.prepare('SELECT * FROM agent_tasks WHERE id = ?').get(taskId) as any;
+    if (!row) return null;
+
+    return this.rowToAgentTask(row);
+  }
+
+  listAgentTasks(sessionId?: string, status?: AgentTaskStatus, limit = 100): AgentTask[] {
+    let sql = 'SELECT * FROM agent_tasks WHERE 1=1';
+    const params: any[] = [];
+
+    if (sessionId) {
+      sql += ' AND session_id = ?';
+      params.push(sessionId);
+    }
+    if (status) {
+      sql += ' AND status = ?';
+      params.push(status);
+    }
+
+    sql += ' ORDER BY created_at DESC LIMIT ?';
+    params.push(limit);
+
+    const rows = this.db.prepare(sql).all(...params) as any[];
+    return rows.map(row => this.rowToAgentTask(row));
+  }
+
+  private rowToAgentTask(row: any): AgentTask {
+    return {
+      id: row.id,
+      sessionId: row.session_id || undefined,
+      agentType: row.agent_type as AgentType,
+      task: row.task,
+      context: row.context || undefined,
+      status: row.status as AgentTaskStatus,
+      results: row.results || undefined,
+      error: row.error || undefined,
+      createdAt: new Date(row.created_at),
+      completedAt: row.completed_at ? new Date(row.completed_at) : undefined,
     };
   }
 

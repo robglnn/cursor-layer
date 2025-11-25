@@ -39,22 +39,55 @@ Then wait for the user's research query.
    - Create a research plan using TodoWrite to track all subtasks
    - Consider which directories, files, or architectural patterns are relevant
 
-3. **Leverage Cursor's built-in agents for parallel research:**
-   - Cursor has native agent orchestration - use it to spawn parallel research tasks
-   - Use specialized agent rules from `.cursor/rules/agents/`:
-     - **codebase-locator** - Find WHERE files and components live
-     - **codebase-analyzer** - Understand HOW specific code works (without critiquing it)
-     - **codebase-pattern-finder** - Find examples of existing patterns (without evaluating them)
+3. **Leverage agents for parallel research:**
    
-   **How to use Cursor's agents:**
-   - Reference the agent rules in `.cursor/rules/agents/` when instructing Cursor to spawn sub-agents
+   **Preferred Method: Use MCP Tools (if available)**
+   - Use the `spawn_agent` MCP tool to create agent tasks
+   - Spawn multiple agents in parallel for different aspects:
+     ```typescript
+     // Example: Spawn 3 agents in parallel
+     spawn_agent({
+       agent_type: "codebase-locator",
+       task: "Find all authentication-related files",
+       context: { directory_hint: "src/auth" }
+     })
+     spawn_agent({
+       agent_type: "codebase-analyzer", 
+       task: "Analyze authentication flow in src/auth",
+       context: { file_paths: ["src/auth/middleware.ts"] }
+     })
+     spawn_agent({
+       agent_type: "codebase-pattern-finder",
+       task: "Find similar authentication patterns",
+       context: { pattern_description: "JWT token validation" }
+     })
+     ```
+   - Wait for all agents to complete using `get_agent_status`
+   - Retrieve results with `get_agent_results`
+   - Update tasks with `update_agent_task` after execution
+   
+   **Fallback Method: Prompt-Based (if MCP tools unavailable)**
+   - Reference the agent rules in `.cursor/rules/agents/` when instructing Cursor
+   - Use explicit prompts: "Act as the codebase-locator agent to find..."
    - Each agent knows its job - just tell it what you're looking for
    - Run multiple agents in parallel when they're searching for different things
    - Remind agents they are documenting, not evaluating or improving
+   
+   **Available Agents:**
+   - **codebase-locator** - Find WHERE files and components live
+   - **codebase-analyzer** - Understand HOW specific code works
+   - **codebase-pattern-finder** - Find examples of existing patterns
+   - **thoughts-locator** - Find relevant documents in thoughts/ directory
+   - **thoughts-analyzer** - Extract insights from thoughts documents
+   - **web-search-researcher** - Find external information via web search
+   
+   See `.cursor/rules/AGENT_CONTRACTS.md` for detailed agent contracts and expected outputs.
 
-4. **Wait for all sub-agents to complete and synthesize findings:**
-   - IMPORTANT: Wait for ALL sub-agent tasks to complete before proceeding
-   - Compile all sub-agent results
+4. **Wait for all agents to complete and synthesize findings:**
+   - IMPORTANT: Wait for ALL agent tasks to complete before proceeding
+   - If using MCP tools: Check status with `get_agent_status` until all are 'completed'
+   - If using prompts: Wait for all agent responses before proceeding
+   - Compile all agent results (from MCP tools or prompt responses)
    - Prioritize live codebase findings as primary source of truth
    - Connect findings across different components
    - Include specific file paths and line numbers for reference
