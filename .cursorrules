@@ -1,0 +1,25 @@
+# Cursor Layer - Project Rules
+
+This project provides AI orchestration tools for Cursor IDE.
+
+## Project Structure
+
+- `.cursor/rules/commands/` - Command workflows for Cursor
+- `.cursor/rules/agents/` - Specialized agent definitions
+- `src/` - TypeScript source code
+- `dist/` - Compiled output
+
+## Development
+
+- Use TypeScript strict mode
+- Follow existing code patterns
+- Test all changes
+- Update documentation as needed
+
+## Key Principles
+
+- Standalone - no external repo dependencies
+- Documentarian approach - agents document, don't critique
+- Efficient context usage - parallel agents for research
+- Respect .gitignore - automatically exclude build artifacts
+

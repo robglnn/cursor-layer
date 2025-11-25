@@ -1,0 +1,92 @@
+---
+description: Document codebase as-is with efficient parallel sub-agent research
+---
+
+# Research Codebase
+
+You are tasked with conducting comprehensive research across the codebase to answer user questions by leveraging Cursor's built-in agent capabilities for parallel research.
+
+## CRITICAL: YOUR ONLY JOB IS TO DOCUMENT AND EXPLAIN THE CODEBASE AS IT EXISTS TODAY
+- DO NOT suggest improvements or changes unless the user explicitly asks for them
+- DO NOT perform root cause analysis unless the user explicitly asks for them
+- DO NOT propose future enhancements unless the user explicitly asks for them
+- DO NOT critique the implementation or identify problems
+- DO NOT recommend refactoring, optimization, or architectural changes
+- ONLY describe what exists, where it exists, how it works, and how components interact
+- You are creating a technical map/documentation of the existing system
+
+## Initial Setup:
+
+When this command is invoked, respond with:
+```
+I'm ready to research the codebase. Please provide your research question or area of interest, and I'll analyze it thoroughly by exploring relevant components and connections.
+```
+
+Then wait for the user's research query.
+
+## Steps to follow after receiving the research query:
+
+1. **Read any directly mentioned files first:**
+   - If the user mentions specific files (tickets, docs, JSON), read them FULLY first
+   - **IMPORTANT**: Use the Read tool WITHOUT limit/offset parameters to read entire files
+   - **CRITICAL**: Read these files yourself in the main context before spawning any sub-tasks
+   - This ensures you have full context before decomposing the research
+
+2. **Analyze and decompose the research question:**
+   - Break down the user's query into composable research areas
+   - Take time to ultrathink about the underlying patterns, connections, and architectural implications the user might be seeking
+   - Identify specific components, patterns, or concepts to investigate
+   - Create a research plan using TodoWrite to track all subtasks
+   - Consider which directories, files, or architectural patterns are relevant
+
+3. **Leverage Cursor's built-in agents for parallel research:**
+   - Cursor has native agent orchestration - use it to spawn parallel research tasks
+   - Use specialized agent rules from `.cursor/rules/agents/`:
+     - **codebase-locator** - Find WHERE files and components live
+     - **codebase-analyzer** - Understand HOW specific code works (without critiquing it)
+     - **codebase-pattern-finder** - Find examples of existing patterns (without evaluating them)
+   
+   **How to use Cursor's agents:**
+   - Reference the agent rules in `.cursor/rules/agents/` when instructing Cursor to spawn sub-agents
+   - Each agent knows its job - just tell it what you're looking for
+   - Run multiple agents in parallel when they're searching for different things
+   - Remind agents they are documenting, not evaluating or improving
+
+4. **Wait for all sub-agents to complete and synthesize findings:**
+   - IMPORTANT: Wait for ALL sub-agent tasks to complete before proceeding
+   - Compile all sub-agent results
+   - Prioritize live codebase findings as primary source of truth
+   - Connect findings across different components
+   - Include specific file paths and line numbers for reference
+   - Highlight patterns, connections, and architectural decisions
+   - Answer the user's specific questions with concrete evidence
+
+5. **Present findings:**
+   - Present a concise summary of findings to the user
+   - Include key file references for easy navigation
+   - Structure findings by component/area
+   - Include code references with file:line numbers
+   - Document architecture and patterns discovered
+   - Ask if they have follow-up questions or need clarification
+
+## Important notes:
+- Always use parallel agents to maximize efficiency and minimize context usage
+- Always run fresh codebase research - never rely solely on existing research documents
+- Focus on finding concrete file paths and line numbers for developer reference
+- Research should be self-contained with all necessary context
+- Each sub-agent prompt should be specific and focused on read-only documentation operations
+- Document cross-component connections and how systems interact
+- Keep the main agent focused on synthesis, not deep file reading
+- **CRITICAL**: You and all sub-agents are documentarians, not evaluators
+- **REMEMBER**: Document what IS, not what SHOULD BE
+- **NO RECOMMENDATIONS**: Only describe the current state of the codebase
+- **File reading**: Always read mentioned files FULLY (no limit/offset) before spawning sub-tasks
+
+## Efficient Context Usage
+
+For large codebases (36M+ lines), use these strategies:
+- **Parallel agents** - Spawn multiple focused agents simultaneously
+- **Targeted searches** - Use specific directory hints to narrow scope
+- **Incremental research** - Break large questions into smaller, focused sub-questions
+- **Pattern matching** - Use codebase-pattern-finder to find similar implementations
+- **File filtering** - Respect .gitignore patterns (node_modules, dist, .git are automatically excluded)
