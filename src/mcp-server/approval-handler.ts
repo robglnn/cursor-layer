@@ -36,12 +36,40 @@ export class ApprovalHandler {
     // Get or create session
     let session: Session | null = null;
     let runId: string = randomUUID();
+    let finalSessionId: string;
 
     if (sessionId) {
       session = this.store.getSession(sessionId);
       if (session) {
         runId = session.runId;
+        finalSessionId = sessionId;
+      } else {
+        // Session ID provided but doesn't exist - create it
+        finalSessionId = sessionId;
+        const newSession: Session = {
+          id: finalSessionId,
+          runId,
+          query: `Approval request for: ${params.tool_name}`,
+          status: 'running',
+          createdAt: new Date(),
+          lastActivityAt: new Date(),
+        };
+        this.store.createSession(newSession);
+        session = newSession;
       }
+    } else {
+      // No session ID provided - create a temporary session for this approval
+      finalSessionId = `approval-session-${randomUUID()}`;
+      const newSession: Session = {
+        id: finalSessionId,
+        runId,
+        query: `Approval request for: ${params.tool_name}`,
+        status: 'running',
+        createdAt: new Date(),
+        lastActivityAt: new Date(),
+      };
+      this.store.createSession(newSession);
+      session = newSession;
     }
 
     // Create approval record
@@ -54,7 +82,7 @@ export class ApprovalHandler {
     const approval: Approval = {
       id: approvalId,
       runId,
-      sessionId: sessionId || 'unknown',
+      sessionId: finalSessionId,
       toolUseId: params.tool_use_id,
       status: 'pending',
       toolName: params.tool_name,
