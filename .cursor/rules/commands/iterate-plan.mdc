@@ -10,11 +10,21 @@ You are tasked with updating existing implementation plans based on user feedbac
 
 When this command is invoked:
 
-1. **Parse the input to identify**:
+1. **Automatically log the session start** (if MCP tools are available):
+   - Generate a unique session_id (e.g., `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
+   - Generate a unique run_id (e.g., `run-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
+   - Use the `log_session_start` MCP tool with:
+     - `session_id`: Generated session ID
+     - `run_id`: Generated run ID
+     - `query`: "Iterate plan: [plan file path or 'pending']"
+     - `working_dir`: Current working directory (if available)
+   - Store the session_id for later use with `log_session_end`
+
+2. **Parse the input to identify**:
    - Plan file path
    - Requested changes/feedback
 
-2. **Handle different input scenarios**:
+3. **Handle different input scenarios**:
 
    **If NO plan file provided**:
    ```
@@ -145,6 +155,12 @@ Get user confirmation before proceeding.
    ```
 
 **Be ready to iterate further** based on feedback
+
+6. **Log session end** (if MCP tools are available and session was logged):
+   - Use the `log_session_end` MCP tool with:
+     - `session_id`: The session ID from step 1
+     - `cost_usd`: Optional cost estimate (if available)
+     - `duration_ms`: Calculate duration from session start
 
 ## Important Guidelines
 

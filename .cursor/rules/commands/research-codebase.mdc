@@ -17,7 +17,19 @@ You are tasked with conducting comprehensive research across the codebase to ans
 
 ## Initial Setup:
 
-When this command is invoked, respond with:
+When this command is invoked:
+
+1. **Automatically log the session start** (if MCP tools are available):
+   - Generate a unique session_id (e.g., `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
+   - Generate a unique run_id (e.g., `run-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
+   - Use the `log_session_start` MCP tool with:
+     - `session_id`: Generated session ID
+     - `run_id`: Generated run ID
+     - `query`: "Research codebase: [user's query or 'pending']"
+     - `working_dir`: Current working directory (if available)
+   - Store the session_id for later use with `log_session_end`
+
+2. **Respond to the user**:
 ```
 I'm ready to research the codebase. Please provide your research question or area of interest, and I'll analyze it thoroughly by exploring relevant components and connections.
 ```
@@ -101,6 +113,12 @@ Then wait for the user's research query.
    - Include code references with file:line numbers
    - Document architecture and patterns discovered
    - Ask if they have follow-up questions or need clarification
+
+6. **Log session end** (if MCP tools are available and session was logged):
+   - Use the `log_session_end` MCP tool with:
+     - `session_id`: The session ID from step 1
+     - `cost_usd`: Optional cost estimate (if available)
+     - `duration_ms`: Calculate duration from session start
 
 ## Important notes:
 - Always use parallel agents to maximize efficiency and minimize context usage
