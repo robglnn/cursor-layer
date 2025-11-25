@@ -1,6 +1,6 @@
 # Project Status
 
-## ✅ Version 0.1.0 - Complete and Stable
+## ✅ Version 0.1.1 - Complete and Stable
 
 ### Core Features
 - ✅ All 4 core commands implemented and working
@@ -14,6 +14,7 @@
 ### Build Status
 - ✅ cursor-layer: Built and tested
 - ✅ cursor-layer-desktop: Built and tested
+- ✅ MCP server: Working with 6 tools enabled
 - ✅ All components working correctly
 
 ### Repository

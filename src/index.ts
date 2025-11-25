@@ -2,7 +2,7 @@
  * Cursor Layer - Main entry point
  */
 
-export * from './storage';
-export * from './mcp-server';
-export * from './file-watcher';
+export * from './storage/index.js';
+export * from './mcp-server/index.js';
+export * from './file-watcher/index.js';
 

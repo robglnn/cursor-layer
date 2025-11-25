@@ -25,7 +25,12 @@ Cursor Layer provides an MCP (Model Context Protocol) server that adds approval 
 Add to your Cursor MCP configuration file (location varies by OS):
 
 **macOS/Linux:** `~/.cursor/mcp.json` or in Cursor settings
-**Windows:** `%APPDATA%\Cursor\mcp.json` or in Cursor settings
+**Windows:** `%APPDATA%\Cursor\mcp.json` (typically `C:\Users\<username>\AppData\Roaming\Cursor\mcp.json`) or in Cursor settings
+
+**Note**: On Windows, you can also configure MCP servers directly in Cursor Settings:
+- Press `Ctrl + ,` to open Settings
+- Navigate to **Tools & Integrations** → **MCP Servers**
+- Click **Add Server** or **+** button
 
 ```json
 {
@@ -130,6 +135,25 @@ Approved. Proceed with deletion.
    ```bash
    node dist/cli/index.js mcp serve
    ```
+
+### Module Not Found Errors
+
+If you see errors like `Cannot find module '.../store'`, this is likely an ES module import issue:
+
+1. **Ensure all imports have `.js` extensions**: ES modules require explicit `.js` extensions in relative imports
+2. **Rebuild the project**: Run `npm run build` to regenerate the compiled files
+3. **Check the compiled output**: Verify `dist/` directory has all `.js` files with proper imports
+
+### Server Capabilities Error
+
+If you see `Server does not support resources`, ensure the server capabilities include both `tools` and `resources`:
+
+```typescript
+capabilities: {
+  tools: {},
+  resources: {},
+}
+```
 
 ### Tools Not Available
 

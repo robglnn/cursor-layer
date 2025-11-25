@@ -8,6 +8,8 @@ export interface Session {
   query: string;
   status: SessionStatus;
   workingDir?: string;
+  worktreePath?: string; // Path to git worktree if this session is in a worktree
+  handoffId?: string; // ID of handoff document if resuming from handoff
   createdAt: Date;
   lastActivityAt: Date;
   completedAt?: Date;

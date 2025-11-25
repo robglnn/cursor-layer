@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.1] - 2025-11-24
+
+### Fixed
+- ✅ Fixed ES module imports - Added `.js` extensions to all relative imports
+- ✅ Fixed MCP server capabilities - Added `resources: {}` to server capabilities
+- ✅ MCP server now successfully connects and provides 6 tools
+
+### Changed
+- Updated all relative imports to include `.js` extensions (required for ES modules)
+- Enhanced MCP server error handling and capabilities
+
 ## [0.1.0] - 2025-11-24
 
 ### Added

@@ -1,4 +1,4 @@
-export * from './server';
-export * from './approval-handler';
-export * from './types';
+export * from './server.js';
+export * from './approval-handler.js';
+export * from './types.js';
 

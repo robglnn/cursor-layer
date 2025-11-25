@@ -11,14 +11,14 @@ import {
   ListToolsRequestSchema,
   ListResourcesRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { Store } from '../storage';
-import { ApprovalHandler } from './approval-handler';
+import { Store } from '../storage/index.js';
+import { ApprovalHandler } from './approval-handler.js';
 import type {
   RequestApprovalParams,
   ListApprovalsParams,
   ApproveParams,
   DenyParams,
-} from './types';
+} from './types.js';
 
 export class MCPServer {
   private server: Server;
@@ -37,6 +37,7 @@ export class MCPServer {
       {
         capabilities: {
           tools: {},
+          resources: {},
         },
       }
     );

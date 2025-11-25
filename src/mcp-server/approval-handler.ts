@@ -9,9 +9,9 @@
  */
 
 import { randomUUID } from 'crypto';
-import { Store } from '../storage';
-import type { Approval, Session } from '../storage/types';
-import type { RequestApprovalParams, ApprovalResponse } from './types';
+import { Store } from '../storage/index.js';
+import type { Approval, Session } from '../storage/types.js';
+import type { RequestApprovalParams, ApprovalResponse } from './types.js';
 
 export class ApprovalHandler {
   private store: Store;

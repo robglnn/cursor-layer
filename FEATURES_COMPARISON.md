@@ -9,12 +9,17 @@
 | Iterate Plan | `iterate_plan_nt.md` | `iterate-plan.mdc` | ✅ Complete |
 | Implement Plan | `implement_plan.md` | `implement-plan.mdc` | ✅ Complete |
 
+## ✅ Development Workflow Commands (Implemented)
+
+| Feature | HumanLayer | Cursor Layer | Status |
+|---------|-----------|--------------|--------|
+| Commit | `commit.md` | `commit.mdc` | ✅ Complete |
+| Debug | `debug.md` | `debug.mdc` | ✅ Complete |
+| Local Review | `local_review.md` | `local-review.mdc` | ✅ Complete |
+
 ## ❌ Additional Commands (Not Yet Implemented)
 
-### Development Workflow Commands
-- **`commit.md`** - Automated commit message generation
-- **`debug.md`** - Debugging assistance workflows
-- **`local_review.md`** - Code review workflows
+### PR/CI Commands
 - **`validate_plan.md`** - Plan validation before implementation
 
 ### PR/CI Commands
@@ -22,10 +27,13 @@
 - **`ci_commit.md`** - CI-specific commit workflows
 - **`ci_describe_pr.md`** - CI PR description workflows
 
-### Worktree Management
-- **`create_worktree.md`** - Git worktree management for parallel sessions
-- **`create_handoff.md`** - Handoff between sessions
-- **`resume_handoff.md`** - Resume from handoff
+### ✅ Worktree Management (Implemented)
+
+| Feature | HumanLayer | Cursor Layer | Status |
+|---------|-----------|--------------|--------|
+| Create Worktree | `create_worktree.md` | `create-worktree.mdc` | ✅ Complete |
+| Create Handoff | `create_handoff.md` | `create-handoff.mdc` | ✅ Complete |
+| Resume Handoff | `resume_handoff.md` | `resume-handoff.mdc` | ✅ Complete |
 
 ### Specialized Workflows
 - **`oneshot.md` / `oneshot_plan.md`** - Single-shot implementation workflows
@@ -46,11 +54,13 @@
 | Codebase Analyzer | `codebase-analyzer.md` | `codebase-analyzer.mdc` | ✅ Complete |
 | Codebase Pattern Finder | `codebase-pattern-finder.md` | `codebase-pattern-finder.mdc` | ✅ Complete |
 
-## ❌ Additional Agents (Not Yet Implemented)
+## ✅ Additional Agents (Implemented)
 
-- **`thoughts-analyzer.md`** - Analyzes thoughts/research documents
-- **`thoughts-locator.md`** - Finds thoughts/research documents
-- **`web-search-researcher.md`** - Web search capabilities
+| Agent | HumanLayer | Cursor Layer | Status |
+|-------|-----------|--------------|--------|
+| Thoughts Analyzer | `thoughts-analyzer.md` | `thoughts-analyzer.mdc` | ✅ Complete |
+| Thoughts Locator | `thoughts-locator.md` | `thoughts-locator.mdc` | ✅ Complete |
+| Web Search Researcher | `web-search-researcher.md` | `web-search-researcher.mdc` | ✅ Complete |
 
 ## ✅ Core Infrastructure (Implemented)
 
@@ -63,27 +73,31 @@
 | Desktop App | Tauri (macOS) | Tauri (Windows + macOS) | ✅ Complete |
 | File Watcher | Built-in | chokidar-based | ✅ Complete |
 
-## ❌ Advanced Features (Not Yet Implemented)
+## ✅ Advanced Features (Implemented)
 
 ### Multi-Session Management
-- **Parallel Sessions** - Run multiple Claude Code sessions simultaneously
-- **Worktree Support** - Git worktrees for isolated parallel work
-- **Session Handoffs** - Transfer work between sessions
+- ✅ **Parallel Sessions** - Run multiple Cursor sessions simultaneously via worktrees
+- ✅ **Worktree Support** - Git worktrees for isolated parallel work
+- ✅ **Session Handoffs** - Transfer work between sessions via handoff documents
+
+### Integration Features
+- ✅ **Web Search** - External research capabilities via web-search-researcher agent
+
+### Thoughts/Research Management
+- ✅ **Thoughts Directory** - Structured research document management (via thoughts/ directory)
+- ✅ **Thoughts Analyzer** - Analyze existing research documents
+- ✅ **Thoughts Locator** - Find related research documents
+
+## ❌ Additional Features (Not Yet Implemented)
 
 ### Integration Features
 - **Linear Integration** - Direct Linear ticket integration
 - **CI/CD Integration** - Automated PR descriptions, commit messages
-- **Web Search** - External research capabilities
 
 ### Advanced Workflows
 - **Founder Mode** - Specialized workflows for founders
 - **Ralph Workflows** - Specialized research/plan/implementation patterns
 - **One-shot Implementation** - Single-pass implementation workflows
-
-### Thoughts/Research Management
-- **Thoughts Directory** - Structured research document management
-- **Thoughts Analyzer** - Analyze existing research
-- **Thoughts Locator** - Find related research documents
 
 ## 🎯 What You Have (Ready to Use)
 
@@ -95,14 +109,19 @@
 5. **Specialized Agents** - Codebase research agents
 6. **File Watching** - Automatic file change tracking
 
-### 🚀 What's Missing (Nice to Have)
+### ✅ What's New (Just Added)
 
-1. **Worktree Management** - For parallel sessions (HumanLayer's "MULTICLAUDE")
-2. **Linear Integration** - Direct ticket integration
-3. **CI/CD Commands** - Automated PR/commit workflows
-4. **Web Search** - External research capabilities
-5. **Thoughts Management** - Structured research document system
-6. **Specialized Workflows** - Founder mode, Ralph workflows, etc.
+1. ✅ **Worktree Management** - For parallel sessions (create-worktree command)
+2. ✅ **Session Handoffs** - Transfer work between sessions (create-handoff, resume-handoff)
+3. ✅ **Web Search** - External research capabilities (web-search-researcher agent)
+4. ✅ **Thoughts Management** - Structured research document system (thoughts-analyzer, thoughts-locator)
+5. ✅ **Dev Workflow Commands** - Commit, debug, local-review commands
+
+### 🚀 What's Still Missing (Nice to Have)
+
+1. **Linear Integration** - Direct ticket integration
+2. **CI/CD Commands** - Automated PR/commit workflows (describe_pr, ci_commit, etc.)
+3. **Specialized Workflows** - Founder mode, Ralph workflows, oneshot implementation
 
 ## 💡 Recommendation
 

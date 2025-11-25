@@ -8,7 +8,7 @@ import Database from 'better-sqlite3';
 import { join } from 'path';
 import { homedir } from 'os';
 import { existsSync, mkdirSync } from 'fs';
-import type { Session, Approval, ConversationEvent, SessionStatus, ApprovalStatus } from './types';
+import type { Session, Approval, ConversationEvent, SessionStatus, ApprovalStatus } from './types.js';
 
 export interface StoreOptions {
   dbPath?: string;
@@ -49,6 +49,8 @@ export class Store {
         query TEXT NOT NULL,
         status TEXT NOT NULL DEFAULT 'starting',
         working_dir TEXT,
+        worktree_path TEXT,
+        handoff_id TEXT,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         last_activity_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         completed_at TIMESTAMP,
@@ -102,16 +104,29 @@ export class Store {
     `;
 
     this.db.exec(schema);
+    
+    // Migrate existing databases: add new columns if they don't exist
+    try {
+      this.db.exec(`
+        ALTER TABLE sessions ADD COLUMN worktree_path TEXT;
+        ALTER TABLE sessions ADD COLUMN handoff_id TEXT;
+      `);
+    } catch (e: any) {
+      // Columns already exist, ignore error
+      if (!e.message?.includes('duplicate column')) {
+        throw e;
+      }
+    }
   }
 
   // Session methods
   createSession(session: Session): void {
     const stmt = this.db.prepare(`
       INSERT INTO sessions (
-        id, run_id, query, status, working_dir,
+        id, run_id, query, status, working_dir, worktree_path, handoff_id,
         created_at, last_activity_at, completed_at,
         cost_usd, duration_ms, error_message
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -120,6 +135,8 @@ export class Store {
       session.query,
       session.status,
       session.workingDir || null,
+      session.worktreePath || null,
+      session.handoffId || null,
       session.createdAt.toISOString(),
       session.lastActivityAt.toISOString(),
       session.completedAt?.toISOString() || null,
@@ -136,6 +153,18 @@ export class Store {
     if (updates.status !== undefined) {
       fields.push('status = ?');
       values.push(updates.status);
+    }
+    if (updates.workingDir !== undefined) {
+      fields.push('working_dir = ?');
+      values.push(updates.workingDir || null);
+    }
+    if (updates.worktreePath !== undefined) {
+      fields.push('worktree_path = ?');
+      values.push(updates.worktreePath || null);
+    }
+    if (updates.handoffId !== undefined) {
+      fields.push('handoff_id = ?');
+      values.push(updates.handoffId || null);
     }
     if (updates.lastActivityAt !== undefined) {
       fields.push('last_activity_at = ?');
@@ -196,6 +225,8 @@ export class Store {
       query: row.query,
       status: row.status as SessionStatus,
       workingDir: row.working_dir || undefined,
+      worktreePath: row.worktree_path || undefined,
+      handoffId: row.handoff_id || undefined,
       createdAt: new Date(row.created_at),
       lastActivityAt: new Date(row.last_activity_at),
       completedAt: row.completed_at ? new Date(row.completed_at) : undefined,

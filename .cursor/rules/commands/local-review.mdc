@@ -1,0 +1,54 @@
+---
+description: Set up worktree for reviewing colleague's branch
+---
+
+# Local Review
+
+You are tasked with setting up a local review environment for a colleague's branch. This involves creating a worktree, setting up dependencies, and preparing for review.
+
+## Process
+
+When invoked with a parameter like `gh_username:branchName`:
+
+1. **Parse the input**:
+   - Extract GitHub username and branch name from the format `username:branchname`
+   - If no parameter provided, ask for it in the format: `gh_username:branchName`
+
+2. **Extract ticket information**:
+   - Look for ticket numbers in the branch name (e.g., `eng-1696`, `ENG-1696`)
+   - Use this to create a short worktree directory name
+   - If no ticket found, use a sanitized version of the branch name
+
+3. **Set up the remote and worktree**:
+   - Check if the remote already exists using `git remote -v`
+   - If not, add it: `git remote add [USERNAME] git@github.com:[USERNAME]/[repo-name]`
+   - Fetch from the remote: `git fetch [USERNAME]`
+   - Create worktree: `git worktree add -b [BRANCHNAME] [WORKTREE_PATH] [USERNAME]/[BRANCHNAME]`
+
+4. **Configure the worktree**:
+   - Copy `.cursor/rules` directory to worktree if needed
+   - Run any setup commands if needed (e.g., `npm install`)
+   - Initialize thoughts directory if using thoughts management
+
+## Error Handling
+
+- If worktree already exists, inform the user they need to remove it first
+- If remote fetch fails, check if the username/repo exists
+- If setup fails, provide the error but continue with the launch
+
+## Example Usage
+
+```
+/local-review samdickson22:sam/eng-1696-hotkey-for-yolo-mode
+```
+
+This will:
+- Add 'samdickson22' as a remote
+- Create worktree at `~/wt/[repo]/eng-1696` (or similar)
+- Set up the environment
+
+## Worktree Path
+
+Default worktree location: `~/wt/[repo-name]/[worktree-name]`
+
+Or use `CURSOR_LAYER_WORKTREE_BASE` environment variable to override the base path.

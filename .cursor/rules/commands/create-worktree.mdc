@@ -1,0 +1,75 @@
+---
+description: Create git worktree for parallel development sessions
+---
+
+# Create Worktree
+
+You are tasked with creating a git worktree for parallel development work. This enables running multiple Cursor sessions simultaneously in isolated environments.
+
+## Process
+
+When invoked with parameters:
+
+1. **Parse input**:
+   - Extract worktree name (optional, will generate if not provided)
+   - Extract base branch (optional, defaults to current branch or main/master)
+   - Extract plan file path if provided
+
+2. **Generate worktree name** (if not provided):
+   - Use ticket number if available (e.g., ENG-1234)
+   - Or use sanitized branch name
+   - Or generate unique name with timestamp
+
+3. **Determine worktree path**:
+   - Default: `~/wt/[repo-name]/[worktree-name]`
+   - Or use `CURSOR_LAYER_WORKTREE_BASE` environment variable if set
+
+4. **Create worktree**:
+   ```bash
+   # Check if branch exists
+   git show-ref --verify --quiet "refs/heads/[worktree-name]"
+   
+   # If branch exists, use it
+   git worktree add "[worktree-path]" "[worktree-name]"
+   
+   # If branch doesn't exist, create it
+   git worktree add -b "[worktree-name]" "[worktree-path]" "[base-branch]"
+   ```
+
+5. **Set up worktree**:
+   - Copy `.cursor/rules` directory to worktree
+   - Run any setup commands if needed (e.g., `npm install`)
+   - Initialize thoughts directory if using thoughts management
+
+6. **Confirm with user**:
+   ```
+   Worktree created successfully!
+   
+   Path: [worktree-path]
+   Branch: [worktree-name]
+   
+   To work in this worktree:
+     cd [worktree-path]
+   
+   To remove this worktree later:
+     git worktree remove [worktree-path]
+     git branch -D [worktree-name]
+   ```
+
+## Important Notes
+
+- **Thoughts directory**: If using thoughts management, the `thoughts/` directory is typically synced between main repo and worktrees
+- **Path usage**: Always use relative paths for thoughts files (e.g., `thoughts/shared/plans/plan.md`)
+- **Isolation**: Each worktree has its own working directory but shares the same git repository
+- **Cleanup**: Remember to remove worktrees when done to avoid clutter
+
+## Example Usage
+
+```
+/create-worktree ENG-1234 main
+```
+
+This creates:
+- Worktree at `~/wt/[repo]/ENG-1234`
+- Branch `ENG-1234` based on `main`
+- Copies `.cursor/rules` for Cursor integration
