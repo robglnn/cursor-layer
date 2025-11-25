@@ -7,14 +7,16 @@ AI orchestration tools for Cursor IDE - enabling context engineering patterns, a
 ## Features
 
 - **Context Engineering Patterns** - Battle-tested workflows for complex codebases
+- **Agent Orchestration** - MCP-based agent spawning and management with 6 specialized agents
+- **Parallel Research** - Efficient codebase exploration using parallel sub-agents
 - **Approval Workflows** - Human-in-the-loop for high-stakes operations via MCP
 - **Session Tracking** - Track AI coding sessions and decisions
-- **Efficient Research** - Parallel sub-agents for comprehensive codebase exploration
 - **Web Search** - External research capabilities via web-search-researcher agent
 - **Thoughts Management** - Structured research document system with thoughts-analyzer and thoughts-locator
 - **Parallel Sessions** - Git worktree support for running multiple sessions simultaneously
 - **Session Handoffs** - Transfer work between sessions via handoff documents
 - **Dev Workflow Commands** - Commit, debug, and local-review commands for streamlined development
+- **Desktop App** - Cross-platform approval management UI (Windows + macOS)
 
 ## Quick Start
 
@@ -111,10 +113,13 @@ npm run build
 ## Documentation
 
 - [QUICKSTART.md](./QUICKSTART.md) - Quick start guide
-- [FEATURES.md](./FEATURES.md) - Complete feature list
+- [STATUS.md](./STATUS.md) - Current status and functionality overview
 - [FEATURES_COMPARISON.md](./FEATURES_COMPARISON.md) - Comparison with HumanLayer
+- [AGENT_USAGE_GUIDE.md](./AGENT_USAGE_GUIDE.md) - Agent orchestration guide
 - [AUTO_MODE_GUIDE.md](./AUTO_MODE_GUIDE.md) - Using with Cursor's Auto mode
 - [MCP_SETUP.md](./MCP_SETUP.md) - MCP server setup instructions
+- [DESKTOP_IMPROVEMENTS.md](./DESKTOP_IMPROVEMENTS.md) - Desktop app improvements
+- [PHASE2_COMPLETE.md](./PHASE2_COMPLETE.md) - Phase 2 implementation summary
 
 ## Status
 
