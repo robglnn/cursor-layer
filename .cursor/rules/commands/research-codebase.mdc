@@ -106,32 +106,148 @@ Then wait for the user's research query.
    - Highlight patterns, connections, and architectural decisions
    - Answer the user's specific questions with concrete evidence
 
-5. **Present findings:**
+5. **Gather metadata for the research document:**
+   - Get current date and time with timezone (ISO format)
+   - Get researcher name (from environment variable USER or USERNAME, or use "AI Assistant")
+   - Get git commit hash: `git rev-parse HEAD`
+   - Get current branch: `git branch --show-current`
+   - Get repository name: Extract from git remote or use current directory name
+   - Determine filename: `thoughts/shared/research/YYYY-MM-DD-ENG-XXXX-description.md`
+     - Format: `YYYY-MM-DD-ENG-XXXX-description.md` where:
+       - YYYY-MM-DD is today's date
+       - ENG-XXXX is the ticket number (omit if no ticket)
+       - description is a brief kebab-case description of the research topic
+     - Examples:
+       - With ticket: `2025-01-08-ENG-1478-parent-child-tracking.md`
+       - Without ticket: `2025-01-08-authentication-flow.md`
+
+6. **Generate research document:**
+   - Create the file at the determined path
+   - Structure the document with YAML frontmatter followed by content:
+     ```markdown
+     ---
+     date: [Current date and time with timezone in ISO format]
+     researcher: [Researcher name]
+     git_commit: [Current commit hash]
+     branch: [Current branch name]
+     repository: [Repository name]
+     topic: "[User's Question/Topic]"
+     tags: [research, codebase, relevant-component-names]
+     status: complete
+     last_updated: [Current date in YYYY-MM-DD format]
+     last_updated_by: [Researcher name]
+     ---
+
+     # Research: [User's Question/Topic]
+
+     **Date**: [Current date and time with timezone]
+     **Researcher**: [Researcher name]
+     **Git Commit**: [Current commit hash]
+     **Branch**: [Current branch name]
+     **Repository**: [Repository name]
+
+     ## Research Question
+     [Original user query]
+
+     ## Summary
+     [High-level documentation of what was found, answering the user's question by describing what exists]
+
+     ## Detailed Findings
+
+     ### [Component/Area 1]
+     - Description of what exists ([file.ext:line](link))
+     - How it connects to other components
+     - Current implementation details (without evaluation)
+
+     ### [Component/Area 2]
+     ...
+
+     ## Code References
+     - `path/to/file.py:123` - Description of what's there
+     - `another/file.ts:45-67` - Description of the code block
+
+     ## Architecture Documentation
+     [Current patterns, conventions, and design implementations found in the codebase]
+
+     ## Historical Context (from thoughts/)
+     [Relevant insights from thoughts/ directory with references]
+     - `thoughts/shared/something.md` - Historical decision about X
+     - `thoughts/local/notes.md` - Past exploration of Y
+     Note: Paths exclude "searchable/" even if found there
+
+     ## Related Research
+     [Links to other research documents in thoughts/shared/research/]
+
+     ## Open Questions
+     [Any areas that need further investigation]
+     ```
+
+7. **Add GitHub permalinks (if applicable):**
+   - Check if on main/master branch or if commit is pushed: `git branch --show-current` and `git status`
+   - If on main/master or pushed, generate GitHub permalinks:
+     - Get repo info: Try to extract from git remote or use repository name
+     - Create permalinks: `https://github.com/{owner}/{repo}/blob/{commit}/{file}#L{line}`
+   - Replace local file references with permalinks in the document where possible
+
+8. **Present findings:**
    - Present a concise summary of findings to the user
+   - Include the path to the created research document
    - Include key file references for easy navigation
    - Structure findings by component/area
    - Include code references with file:line numbers
    - Document architecture and patterns discovered
    - Ask if they have follow-up questions or need clarification
 
-6. **Log session end** (if MCP tools are available and session was logged):
+9. **Log session end** (if MCP tools are available and session was logged):
    - Use the `log_session_end` MCP tool with:
      - `session_id`: The session ID from step 1
      - `cost_usd`: Optional cost estimate (if available)
      - `duration_ms`: Calculate duration from session start
 
+10. **Handle follow-up questions:**
+    - If the user has follow-up questions, append to the same research document
+    - Update the frontmatter fields `last_updated` and `last_updated_by` to reflect the update
+    - Add `last_updated_note: "Added follow-up research for [brief description]"` to frontmatter
+    - Add a new section: `## Follow-up Research [timestamp]`
+    - Spawn new sub-agents as needed for additional investigation
+    - Continue updating the document
+
 ## Important notes:
 - Always use parallel agents to maximize efficiency and minimize context usage
 - Always run fresh codebase research - never rely solely on existing research documents
+- The thoughts/ directory provides historical context to supplement live findings
 - Focus on finding concrete file paths and line numbers for developer reference
-- Research should be self-contained with all necessary context
+- Research documents should be self-contained with all necessary context
 - Each sub-agent prompt should be specific and focused on read-only documentation operations
 - Document cross-component connections and how systems interact
+- Include temporal context (when the research was conducted)
+- Link to GitHub when possible for permanent references
 - Keep the main agent focused on synthesis, not deep file reading
+- Have sub-agents document examples and usage patterns as they exist
+- Explore all of thoughts/ directory, not just research subdirectory
 - **CRITICAL**: You and all sub-agents are documentarians, not evaluators
 - **REMEMBER**: Document what IS, not what SHOULD BE
 - **NO RECOMMENDATIONS**: Only describe the current state of the codebase
 - **File reading**: Always read mentioned files FULLY (no limit/offset) before spawning sub-tasks
+- **Critical ordering**: Follow the numbered steps exactly
+  - ALWAYS read mentioned files first before spawning sub-tasks (step 1)
+  - ALWAYS wait for all sub-agents to complete before synthesizing (step 4)
+  - ALWAYS gather metadata before writing the document (step 5 before step 6)
+  - NEVER write the research document with placeholder values
+- **Path handling**: The thoughts/searchable/ directory contains hard links for searching
+  - Always document paths by removing ONLY "searchable/" - preserve all other subdirectories
+  - Examples of correct transformations:
+    - `thoughts/searchable/allison/old_stuff/notes.md` → `thoughts/allison/old_stuff/notes.md`
+    - `thoughts/searchable/shared/prs/123.md` → `thoughts/shared/prs/123.md`
+    - `thoughts/searchable/global/shared/templates.md` → `thoughts/global/shared/templates.md`
+  - NEVER change allison/ to shared/ or vice versa - preserve the exact directory structure
+  - This ensures paths are correct for editing and navigation
+- **Frontmatter consistency**:
+  - Always include frontmatter at the beginning of research documents
+  - Keep frontmatter fields consistent across all research documents
+  - Update frontmatter when adding follow-up research
+  - Use snake_case for multi-word field names (e.g., `last_updated`, `git_commit`)
+  - Tags should be relevant to the research topic and components studied
 
 ## Efficient Context Usage
 
