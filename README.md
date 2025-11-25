@@ -17,7 +17,7 @@ AI orchestration tools for Cursor IDE - enabling context engineering patterns, a
 
 ```bash
 # Clone the repository
-git clone <your-repo-url> cursor-layer
+git clone https://github.com/robglnn/cursor-layer.git
 cd cursor-layer
 
 # Install dependencies

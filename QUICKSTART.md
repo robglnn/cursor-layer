@@ -38,15 +38,38 @@ If you want approval workflows and session tracking:
      "mcpServers": {
        "cursor-layer": {
          "command": "node",
-         "args": ["/absolute/path/to/cursor-layer/dist/mcp-server/index.js"]
+         "args": ["C:\\absolute\\path\\to\\cursor-layer\\dist\\mcp-server\\index.js"]
        }
      }
    }
    ```
+   **Note**: Use absolute path with Windows-style backslashes or forward slashes
 
 3. **Restart Cursor** to load the MCP server
 
-### Step 3: Use Commands in Cursor
+### Step 3: (Optional) Desktop App
+
+For visual approval management:
+
+1. **Build desktop app** (if not already built):
+   ```bash
+   cd cursor-layer-desktop
+   npm install
+   npm run tauri build
+   ```
+
+2. **Run the app**:
+   ```powershell
+   .\src-tauri\target\release\cursor-layer-desktop.exe
+   ```
+
+The desktop app:
+- ✅ Works standalone (no MCP server needed)
+- ✅ Auto-creates database on first run
+- ✅ Shares database with MCP server automatically
+- ✅ Shows approvals/sessions created via MCP
+
+### Step 4: Use Commands in Cursor
 
 **Enable Auto Mode** (recommended for unlimited tokens):
 - In Cursor, enable Auto mode from the chat interface
